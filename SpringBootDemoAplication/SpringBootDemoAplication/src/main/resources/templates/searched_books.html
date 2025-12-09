@@ -2,13 +2,12 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <title>Searched Books</title>
 </head>
 <body>
-<h1>Home Page</h1>
-<a href="/book/create">Create book</a>
-<a href="/book/search">Search book</a>
-<table>
+<h1>Searched Books</h1>
+<a href="/">All books</a>
+<table >
   <thead>
   <tr>
     <th>TITLE</th>
@@ -17,18 +16,14 @@
     <th>AUTHOR</th>
   </tr>
   </thead>
-
-
   <tbody>
-  <tr th:each="book : ${books}">
+  <tr th:each="book : ${searched_books}">
     <td th:text="${book.title}"></td>
     <td th:text="${book.description}"></td>
     <td th:text="${book.price}"></td>
     <td th:text="${book.author}"></td>
   </tr>
   </tbody>
-
 </table>
-<th:block></th:block>
 </body>
 </html>

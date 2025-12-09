@@ -1,40 +1,19 @@
-import java.util.InputMismatchException;
-import java.util.Scanner;
+
 
 public class Main {
-
   public static void main(String[] args) {
-    Scanner sc = new Scanner(System.in);
 
-   /* try {
-      System.out.print("enter number:");
-      int num = sc.nextInt();
+    Person odam = new Person("Og'abek", 20, "Erkak", 175, 70);
 
-      System.out.println(num);
-    }catch (RuntimeException e){
-      System.out.println(e);
-    }
+    System.out.println("1-holat");
+    odam.showInfo();
 
-    System.out.println("code ishlamoqda");
+    odam.setAge(25);
 
+    System.out.println("2-holat setter orqali age set qilingandan so'ng:");
 
-*/
-    int[] array = new int[5];
-    String str = "hello world";
-
-    try {
-      String substring = str.substring(0,5);
-      System.out.println(substring);
-
-      array[5] = 56;
+    odam.showInfo();
 
 
-    }catch (ArrayIndexOutOfBoundsException | NullPointerException e ) {
-      System.out.println(e);
-    }
-
-    System.out.println("code ishlamoqda");
-
-
-    }
+  }
 }
