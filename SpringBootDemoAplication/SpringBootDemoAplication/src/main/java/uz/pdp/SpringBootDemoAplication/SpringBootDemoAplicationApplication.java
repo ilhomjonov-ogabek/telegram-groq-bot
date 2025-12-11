@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 @SpringBootApplication
-@EnableConfigurationProperties(MailConfigs.class)
 public class SpringBootDemoAplicationApplication {
 
 	public static void main(String[] args) {

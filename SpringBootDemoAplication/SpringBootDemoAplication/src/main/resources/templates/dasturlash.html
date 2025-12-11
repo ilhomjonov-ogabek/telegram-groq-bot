@@ -2,7 +2,7 @@
 <html lang="uz">
 <head>
   <meta charset="UTF-8">
-  <title>4x5 Jadval   Ilhomjonov Ogabek</title>
+  <title>  Ilhomjonov Ogabek</title>
   <style>
     table { border-collapse: collapse; margin-top: 10px; }
     td { border: 1px solid #444; padding: 10px; width: 50px; text-align: center; }
@@ -11,7 +11,7 @@
 </head>
 <body>
 
-<h3>  Ilhomjonov Ogabek Amaliy ishi</h3>
+<h3>Dasturlash Ilhomjonov Og'abek</h3>
 
 <button onclick="fillTable()">Random to‘ldirish</button>
 <button onclick="filterNumbers()">3 ga va 5 ga bo‘linadiganlar</button>
@@ -24,7 +24,6 @@
 <p><b>3 va 5 ga (15 ga) bo‘linadiganlar:</b> <span id="divBoth">—</span></p>
 
 <script>
-  // 4x5 jadvalni yaratish
   const tbl = document.getElementById("tbl");
   for (let r = 0; r < 4; r++) {
     let row = document.createElement("tr");
@@ -36,7 +35,6 @@
     tbl.appendChild(row);
   }
 
-  // 1) Random bilan to‘ldirish
   function fillTable() {
     for (let r = 0; r < tbl.rows.length; r++) {
       for (let c = 0; c < tbl.rows[r].cells.length; c++) {
@@ -46,23 +44,19 @@
     }
   }
 
-  // 2) 3 va 5 ga bo‘linadiganlarni ajratish
   function filterNumbers() {
     let numbers = [];
 
-    // Jadvaldan sonlarni olish
     for (let r = 0; r < tbl.rows.length; r++) {
       for (let c = 0; c < tbl.rows[r].cells.length; c++) {
         numbers.push(Number(tbl.rows[r].cells[c].innerText));
       }
     }
 
-    // Filtrlash
     let div3 = numbers.filter(n => n % 3 === 0);
     let div5 = numbers.filter(n => n % 5 === 0);
     let both = numbers.filter(n => n % 15 === 0);
 
-    // Natija chiqarish
     document.getElementById("div3").innerText = div3.join(", ") || "—";
     document.getElementById("div5").innerText = div5.join(", ") || "—";
     document.getElementById("divBoth").innerText = both.join(", ") || "—";
