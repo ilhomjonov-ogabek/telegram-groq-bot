@@ -1,0 +1,12 @@
+{
+  "first_name": "Ogabek",
+  "last_name": "Ilhomjonov",
+  "age": 19,
+  "programmingLanguage": [
+    "Java",
+    "Scala",
+    "Kotlin",
+    "Groovy",
+    "Go"
+  ]
+}
