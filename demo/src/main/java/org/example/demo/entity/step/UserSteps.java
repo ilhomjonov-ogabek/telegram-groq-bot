@@ -1,19 +1,14 @@
 package org.example.demo.entity.step;
 
 public enum UserSteps {
-  REGISTER,
+  START,
   MENU,
   CATEGORY,
-  C_PRODUCTS,
-  C_PRODUCTS_WIEV,
+  C_PRODUCT,
+  ADD_PRODUCT,
   BASKET,
-  B_PRODUCTS,
-  B_PRODUCTS_WIEV,
-  NOTIFICATION,
-  SETTINGS,
-  HISTORY,
-  H_PROCESSING,
-  H_DELIVERED,
-  PRODUCT
-
+  BUY_PRODUCT,
+  NATIFICATION,
+  H_PRODUCT,
+  HISTORY
 }

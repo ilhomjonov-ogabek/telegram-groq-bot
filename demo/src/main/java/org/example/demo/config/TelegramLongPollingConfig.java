@@ -1,13 +1,11 @@
 package org.example.demo.config;
 
 
-import static org.example.demo.entity.result.InlineResUser.CATEGORY;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.example.demo.entity.enums.RequestEnum;
-import org.example.demo.entity.result.InlineResUser;
 import org.example.demo.methods.AllMethodService;
 import org.example.demo.service.BotResponseService;
 import org.springframework.beans.factory.annotation.Value;
@@ -74,7 +72,13 @@ public class TelegramLongPollingConfig extends TelegramLongPollingBot {
 
           case B_PRODUCT -> execute(botResponseService.pressBProduct(update));
 
-          /*case BACK -> execute();
+          case H_PRODUCT -> execute(botResponseService.pressHProduct(update));
+
+          case BACK -> execute(botResponseService.pressBack(update));
+
+          case BUY_PRODUCT -> execute(botResponseService.pressBuy(update));
+
+          /*
 
           case NEXT -> execute();
 */

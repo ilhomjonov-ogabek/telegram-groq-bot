@@ -14,5 +14,11 @@ public enum RequestEnum {
   BACK,
   NEXT,
   ADD_BASKET,
-  B_PRODUCT
+  B_PRODUCT,
+  H_PRODUCT,
+  //  #######
+  MENU,
+  ADD_PRODUCT,
+  BUY_PRODUCT,
+
 }

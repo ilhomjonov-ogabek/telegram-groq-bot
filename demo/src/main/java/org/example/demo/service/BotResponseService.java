@@ -36,4 +36,8 @@ public interface BotResponseService {
   BotApiMethod<?> pressAddBasket(Update update);
 
   BotApiMethod<?> pressBProduct(Update update);
+
+  BotApiMethod<?> pressHProduct(Update update);
+
+  BotApiMethod<?> pressBuy(Update update);
 }

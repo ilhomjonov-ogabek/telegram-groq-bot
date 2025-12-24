@@ -51,5 +51,8 @@ public class Products {
   @Column
   private boolean active;
 
+  @Column
+  private String imageId;
+
 
 }

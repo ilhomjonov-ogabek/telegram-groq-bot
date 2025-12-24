@@ -41,6 +41,10 @@ public class AllMethodService {
       return  RequestEnum.B_PRODUCT;
     } else if (botRequestService.equalsAddBasket(update)) {
       return  RequestEnum.ADD_BASKET;
+    }else if(botRequestService.equalsHProduct(update)){
+      return  RequestEnum.H_PRODUCT;
+    } else if (botRequestService.equalsBuy(update)) {
+      return  RequestEnum.BUY_PRODUCT;
     }
     return RequestEnum.TRAY_START;
   }

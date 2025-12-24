@@ -1,5 +1,7 @@
 package org.example.demo.service.Impl;
 
+
+
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +14,7 @@ import org.example.demo.entity.ReturnChatAndMessageId;
 import org.example.demo.entity.User;
 import org.example.demo.entity.enums.RequestEnum;
 import org.example.demo.entity.result.InlineResUser;
+import org.example.demo.entity.step.UserRequests;
 import org.example.demo.entity.step.UserSteps;
 import org.example.demo.repo.CategoryRepository;
 import org.example.demo.repo.NotificationRepository;
@@ -68,7 +71,7 @@ public class BotResponseServiceImpl implements BotResponseService {
         .firstName(update.getMessage().getFrom().getFirstName())
         .role(1)
         .lastName(update.getMessage().getFrom().getLastName())
-        .step(UserSteps.REGISTER.toString())
+        .step(UserSteps.START.toString())
         .build());
     return message;
   }
@@ -111,7 +114,7 @@ public class BotResponseServiceImpl implements BotResponseService {
         Optional<User> byChatId = userRepository.findByChatId(chatId);
         byChatId.ifPresent(user -> {
           user.setPhoneNumber(phoneNumber);
-          user.setOldStep(UserSteps.REGISTER.toString());
+          user.setOldStep(UserSteps.START.toString());
           user.setStep(UserSteps.MENU.toString());
 
         });
@@ -140,8 +143,8 @@ public class BotResponseServiceImpl implements BotResponseService {
     user.setStep(UserSteps.BASKET.toString());
     userRepository.save(user);
 
-    List<Products> userProducts = productRepository.findByUserId(
-        update.getMessage().getFrom().getId());
+    List<Products> userProducts = productRepository.findByUserIdAndActive(
+        update.getMessage().getFrom().getId(),true);
 
     SendMessage sendMessage = new SendMessage();
     sendMessage.setChatId(chatId.toString());
@@ -155,6 +158,7 @@ public class BotResponseServiceImpl implements BotResponseService {
     InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
     List<List<InlineKeyboardButton>> rows = new ArrayList<>();
     List<InlineKeyboardButton> currentRow = new ArrayList<>();
+    List<InlineKeyboardButton> currentRow2 = new ArrayList<>();
 
     for (int i = 0; i < userProducts.size(); i++) {
       Products product = userProducts.get(i);
@@ -172,6 +176,14 @@ public class BotResponseServiceImpl implements BotResponseService {
       }
     }
 
+    InlineKeyboardButton back = new InlineKeyboardButton();
+    back.setText("Back");
+    back.setCallbackData("back");
+    currentRow2.add(back);
+    rows.add(currentRow2);
+
+
+
     inlineKeyboardMarkup.setKeyboard(rows);
     sendMessage.setReplyMarkup(inlineKeyboardMarkup);
     return sendMessage;
@@ -183,7 +195,7 @@ public class BotResponseServiceImpl implements BotResponseService {
 
     User user = userRepository.findByChatId(chatId).get();
     user.setOldStep(UserSteps.MENU.toString());
-    user.setStep(UserSteps.NOTIFICATION.toString());
+    user.setStep(UserSteps.NATIFICATION.toString());
     userRepository.save(user);
 
     List<Notification> userNotification = notificationRepository.findByUserId(update
@@ -258,7 +270,7 @@ public class BotResponseServiceImpl implements BotResponseService {
 
       InlineKeyboardButton button = InlineKeyboardButton.builder()
           .text(product.getName())
-          .callbackData(inlineResUser.C_PRODUCT + product.getId().toString())
+          .callbackData(inlineResUser.H_PRODUCT + product.getId().toString())
           .build();
 
       currentRow.add(button);
@@ -284,15 +296,13 @@ public class BotResponseServiceImpl implements BotResponseService {
     Long chatId = update.getCallbackQuery().getMessage().getChatId();
     int messageId = update.getCallbackQuery().getMessage().getMessageId();
     User user = userRepository.findByChatId(chatId).get();
-    user.setOldStep(UserSteps.MENU.toString());
-    user.setStep(UserSteps.CATEGORY.toString());
-    userRepository.save(user);
+    UserSteps step = UserSteps.valueOf(user.getStep());
 
-    EditMessageText editMessageText = new EditMessageText();
-    editMessageText.setChatId(chatId.toString());
-    editMessageText.setMessageId(messageId);
+    switch (step) {
+      case  CATEGORY: return  passCategoryzButtonResponceStatePage(update);
 
-    return null;
+    }
+    return passCategoryzButtonResponceStatePage(update);
   }
 
   @Override
@@ -307,8 +317,8 @@ public class BotResponseServiceImpl implements BotResponseService {
     int messageId = update.getCallbackQuery().getMessage().getMessageId();
     Long productId = (long) Integer.parseInt(data.substring(9));
     User user = userRepository.findByChatId(chatId).get();
-    user.setOldStep(UserSteps.C_PRODUCTS.toString());
-    user.setStep(UserSteps.PRODUCT.toString());
+    user.setOldStep(UserSteps.CATEGORY.toString());
+    user.setStep(UserSteps.C_PRODUCT.toString());
     userRepository.save(user);
     Optional<Products> product = productRepository.findById(productId);
 
@@ -368,7 +378,7 @@ public class BotResponseServiceImpl implements BotResponseService {
     Long productId = (long) Integer.parseInt(data.substring(9));
     User user = userRepository.findByChatId(chatId).get();
     user.setOldStep(UserSteps.BASKET.toString());
-    user.setStep(UserSteps.B_PRODUCTS.toString());
+    user.setStep(UserSteps.BUY_PRODUCT.toString());
     userRepository.save(user);
     Optional<Products> product = productRepository.findById(productId);
 
@@ -387,7 +397,7 @@ public class BotResponseServiceImpl implements BotResponseService {
     List<InlineKeyboardButton> currentRow = new ArrayList<>();
     InlineKeyboardButton buttonBuy = new InlineKeyboardButton();
     buttonBuy.setText("Buy");
-    buttonBuy.setCallbackData("buy" + productId);
+    buttonBuy.setCallbackData("BUY_PRODUCT" + productId);
 
     InlineKeyboardButton cancel =  new InlineKeyboardButton();
     cancel.setText("Cancel");
@@ -408,10 +418,68 @@ public class BotResponseServiceImpl implements BotResponseService {
     return editMessageText;
   }
 
+  @Override
+  public BotApiMethod<?> pressHProduct(Update update) {
+    Long chatId = update.getCallbackQuery().getMessage().getChatId();
+    String data = update.getCallbackQuery().getData();
+    int messageId = update.getCallbackQuery().getMessage().getMessageId();
+    Long productId = (long) Integer.parseInt(data.substring(9));
+    User user = userRepository.findByChatId(chatId).get();
+    user.setOldStep(UserSteps.HISTORY.toString());
+    user.setStep(UserSteps.H_PRODUCT.toString());
+    userRepository.save(user);
+    Optional<Products> product = productRepository.findById(productId);
+
+    EditMessageText editMessageText = new EditMessageText();
+    editMessageText.setChatId(chatId.toString());
+    editMessageText.setMessageId(messageId);
+    editMessageText.setText(
+        "Name: " + product.get().getName() + "\n" +
+            "Price: " + product.get().getPrice().toString() + "\n" +
+            "Information: " + product.get().getInformation() + "\n" +
+            "Count: " + product.get().getCount()
+    );
+
+    InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+    List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+    List<InlineKeyboardButton> currentRow = new ArrayList<>();
+
+    InlineKeyboardButton back = new InlineKeyboardButton();
+    back.setText("Back");
+    back.setCallbackData("back");
+
+    currentRow.add(back);
+    rows.add(currentRow);
+    inlineKeyboardMarkup.setKeyboard(rows);
+    editMessageText.setReplyMarkup(inlineKeyboardMarkup);
+
+
+    return editMessageText;
+  }
+
+  @Override
+  public BotApiMethod<?> pressBuy(Update update) {
+    Long chatId = update.getCallbackQuery().getMessage().getChatId();
+    String data = update.getCallbackQuery().getData();
+    Long productId = (long) Integer.parseInt(data.substring(11));
+    Optional<Products> products = productRepository.findById(productId);
+    if(products.isEmpty()) return null;
+    Products products1 = products.get();
+    User user = userRepository.findByChatId(chatId).get();
+    Long userId = user.getUserId();
+    products1.setUserId(userId);
+    products1.setActive(false);
+    productRepository.save(products1);
+
+
+
+    return pressBProduct(update);
+  }
+
   public BotApiMethod<?> pressCProduct(Long chatId, Long productId, int messageId) {
     User user = userRepository.findByChatId(chatId).get();
-    user.setOldStep(UserSteps.C_PRODUCTS.toString());
-    user.setStep(UserSteps.PRODUCT.toString());
+    user.setOldStep(UserSteps.C_PRODUCT.toString());
+    user.setStep(UserSteps.ADD_PRODUCT.toString());
     userRepository.save(user);
     Optional<Products> product = productRepository.findById(productId);
 
@@ -483,8 +551,8 @@ public class BotResponseServiceImpl implements BotResponseService {
     Long chatId = update.getMessage().getChatId();
 
     User user = userRepository.findByChatId(chatId).get();
-    user.setOldStep(UserSteps.MENU.toString());
-    user.setStep(UserSteps.CATEGORY.toString());
+    user.setOldStep(UserRequests.MENU.toString());
+    user.setStep(UserRequests.CATEGORY.toString());
     userRepository.save(user);
 
     SendMessage sendMessage = new SendMessage();
@@ -527,7 +595,7 @@ public class BotResponseServiceImpl implements BotResponseService {
     int categoryId = Integer.parseInt(data.substring(8));
     User user = userRepository.findByChatId(chatId).get();
     user.setOldStep(UserSteps.CATEGORY.toString());
-    user.setStep(UserSteps.C_PRODUCTS.toString());
+    user.setStep(UserSteps.C_PRODUCT.toString());
     userRepository.save(user);
 
     EditMessageText editMessage = new EditMessageText();
@@ -537,12 +605,17 @@ public class BotResponseServiceImpl implements BotResponseService {
 
     InlineKeyboardMarkup productMarkup = new InlineKeyboardMarkup();
     List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+    List<InlineKeyboardButton> row1 = new ArrayList<>();
 
-    InlineKeyboardButton product1 = new InlineKeyboardButton();
-    List<Products> byCategoryId = productRepository.findByCategoryId((long) categoryId);
-    for (Products products : byCategoryId) {
-      product1.setText(products.getName());
-      product1.setCallbackData(inlineResUser.C_PRODUCT + products.getId().toString());
+
+    List<Products> byCategoryId = productRepository.findByCategoryIdAndActive((long) categoryId,true);
+    if(!byCategoryId.isEmpty()) {
+      InlineKeyboardButton product1 = new InlineKeyboardButton();
+      for (Products products : byCategoryId) {
+        product1.setText(products.getName());
+        product1.setCallbackData(inlineResUser.C_PRODUCT + products.getId().toString());
+      }
+      row1.add(product1);
     }
 
     InlineKeyboardButton button = new InlineKeyboardButton();
@@ -556,8 +629,7 @@ public class BotResponseServiceImpl implements BotResponseService {
     List<InlineKeyboardButton> row2 = new ArrayList<>();
     row2.add(button);
 
-    List<InlineKeyboardButton> row1 = new ArrayList<>();
-    row1.add(product1);
+
     rows.add(row1);
     rows.add(row2);
 

@@ -45,7 +45,7 @@ public class BotRequestServiceImpl implements BotRequestService {
   public boolean equalsCategory(Update update) {
     CallbackQuery callbackQuery = update.getCallbackQuery();
     String request = callbackQuery.getData();
-    if(request.charAt(0) == 'C') {
+    if (request.charAt(0) == 'C') {
       String substring = request.substring(0, 8);
       if (substring.equals("CATEGORY")) {
         return true;
@@ -160,7 +160,7 @@ public class BotRequestServiceImpl implements BotRequestService {
   public boolean equalsCProduct(Update update) {
     CallbackQuery callbackQuery = update.getCallbackQuery();
     String request = callbackQuery.getData();
-    if(request.charAt(0) == 'C') {
+    if (request.charAt(0) == 'C') {
       String substring = request.substring(0, 9);
       if (substring.equals("C_PRODUCT")) {
         return true;
@@ -173,7 +173,7 @@ public class BotRequestServiceImpl implements BotRequestService {
   public boolean equalsAddBasket(Update update) {
     CallbackQuery callbackQuery = update.getCallbackQuery();
     String request = callbackQuery.getData();
-    if(request.charAt(0) == 'b') {
+    if (request.charAt(0) == 'b') {
       String substring = request.substring(0, 6);
       if (substring.equals("basket")) {
         return true;
@@ -187,7 +187,7 @@ public class BotRequestServiceImpl implements BotRequestService {
     CallbackQuery callbackQuery = update.getCallbackQuery();
     String request = callbackQuery.getData();
     System.out.println(request);
-    if(request.charAt(0) == 'B') {
+    if (request.charAt(0) == 'B') {
       String substring = request.substring(0, 9);
       if (substring.equals("B_PRODUCT")) {
         return true;
@@ -197,5 +197,32 @@ public class BotRequestServiceImpl implements BotRequestService {
     return false;
   }
 
+  @Override
+  public boolean equalsHProduct(Update update) {
+    CallbackQuery callbackQuery = update.getCallbackQuery();
+    String request = callbackQuery.getData();
+    System.out.println(request);
+    if (request.charAt(0) == 'H') {
+      String substring = request.substring(0, 9);
+      if (substring.equals("H_PRODUCT")) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public boolean equalsBuy(Update update) {
+    CallbackQuery callbackQuery = update.getCallbackQuery();
+    String request = callbackQuery.getData();
+    if(request.charAt(0) == 'B' && request.substring(0, 11).equals("BUY_PRODUCT")){
+      return true;
+    }
+    return false;
+  }
 
 }
+
+
+
+

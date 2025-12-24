@@ -33,4 +33,8 @@ public interface BotRequestService {
   boolean equalsAddBasket(Update update);
 
   boolean equalsBProduct(Update update);
+
+  boolean equalsHProduct(Update update);
+
+  boolean equalsBuy(Update update);
 }
