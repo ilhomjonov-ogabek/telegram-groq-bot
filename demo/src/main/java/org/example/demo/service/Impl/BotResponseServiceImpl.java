@@ -23,6 +23,7 @@ import org.example.demo.repo.UserRepository;
 import org.example.demo.service.BotResponseService;
 import org.example.demo.service.MethodsService;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -95,11 +96,6 @@ public class BotResponseServiceImpl implements BotResponseService {
     SendMessage message = new SendMessage();
     message.setChatId(update.getMessage().getChatId().toString());
     return getMainMenuKeyboard(message);
-
-    /*SendMessage response = new SendMessage();
-    response.setChatId(update.getMessage().getChatId().toString());
-    return getMainMenuKeyboard(response);*/
-    /*return sendPhoneNumber(update);*/
   }
 
 
@@ -128,7 +124,6 @@ public class BotResponseServiceImpl implements BotResponseService {
       }
 
     }
-
     return null;
   }
 
@@ -182,8 +177,6 @@ public class BotResponseServiceImpl implements BotResponseService {
     currentRow2.add(back);
     rows.add(currentRow2);
 
-
-
     inlineKeyboardMarkup.setKeyboard(rows);
     sendMessage.setReplyMarkup(inlineKeyboardMarkup);
     return sendMessage;
@@ -213,30 +206,10 @@ public class BotResponseServiceImpl implements BotResponseService {
       return sendMessage;
     }
 
-    /*InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-    List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-    List<InlineKeyboardButton> currentRow = new ArrayList<>();
-*/
     for (int i = 0; i < userNotification.size(); i++) {
       Notification notification = userNotification.get(i);
 
       sendMessage.setText(i + "-" + notification.getDescription());
-
-    /*  InlineKeyboardButton button = InlineKeyboardButton.builder()
-          .text(notification.getDescription())
-          .callbackData(notification.getId().toString())
-          .build();
-
-      currentRow.add(button);
-
-      if (currentRow.size() == 2 || i == userNotification.size() - 1) {
-        rows.add(currentRow);
-        currentRow = new ArrayList<>();
-      }
-    }
-
-    inlineKeyboardMarkup.setKeyboard(rows);
-    sendMessage.setReplyMarkup(inlineKeyboardMarkup);*/
     }
     return sendMessage;
   }
@@ -401,7 +374,7 @@ public class BotResponseServiceImpl implements BotResponseService {
 
     InlineKeyboardButton cancel =  new InlineKeyboardButton();
     cancel.setText("Cancel");
-    cancel.setCallbackData("cancel" + productId);
+    cancel.setCallbackData("CANCEL" + productId);
 
     InlineKeyboardButton back = new InlineKeyboardButton();
     back.setText("Back");
@@ -470,10 +443,77 @@ public class BotResponseServiceImpl implements BotResponseService {
     products1.setUserId(userId);
     products1.setActive(false);
     productRepository.save(products1);
+    AnswerCallbackQuery answer = new AnswerCallbackQuery();
+    answer.setCallbackQueryId(chatId.toString());
+    answer.setText("Mahsulot savatchaga qo'shildi! ✅");
+    answer.setShowAlert(false);
 
 
 
-    return pressBProduct(update);
+    return pressBasket(update.getCallbackQuery().getMessage().getChatId(),update.getCallbackQuery().getMessage().getMessageId());
+  }
+
+  public BotApiMethod<?> pressBasket(Long chatId, int messageId) {
+
+    User user = userRepository.findByChatId(chatId).get();
+    user.setOldStep(UserSteps.MENU.toString());
+    user.setStep(UserSteps.BASKET.toString());
+    userRepository.save(user);
+
+    List<Products> userProducts = productRepository.findByUserIdAndActive(chatId,true);
+
+    EditMessageText editMessage = new EditMessageText();
+    editMessage.setChatId(chatId.toString());
+    editMessage.setMessageId(messageId);
+    editMessage.setText("Your basket:");
+
+    if (userProducts.isEmpty()) {
+      editMessage.setText("Nothing not found from basket!");
+      return editMessage;
+    }
+
+    InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+    List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+    List<InlineKeyboardButton> currentRow = new ArrayList<>();
+    List<InlineKeyboardButton> currentRow2 = new ArrayList<>();
+
+    for (int i = 0; i < userProducts.size(); i++) {
+      Products product = userProducts.get(i);
+
+      InlineKeyboardButton button = InlineKeyboardButton.builder()
+          .text(product.getName())
+          .callbackData("B_PRODUCT" + product.getId().toString())
+          .build();
+
+      currentRow.add(button);
+
+      if (currentRow.size() == 2 || i == userProducts.size() - 1) {
+        rows.add(currentRow);
+        currentRow = new ArrayList<>();
+      }
+    }
+
+    InlineKeyboardButton back = new InlineKeyboardButton();
+    back.setText("Back");
+    back.setCallbackData("back");
+    currentRow2.add(back);
+    rows.add(currentRow2);
+
+    inlineKeyboardMarkup.setKeyboard(rows);
+    editMessage.setReplyMarkup(inlineKeyboardMarkup);
+    return editMessage;
+  }
+
+  @Override
+  @Transactional
+  public BotApiMethod<?> pressCancel(Update update) {
+    Long productId = (long) Integer.parseInt(update.getCallbackQuery().getData().substring(6));
+    Products products = productRepository.getById(productId);
+    products.setUserCount(products.getUserCount() - 1);
+    products.setUserId(null);
+    products.setCount(products.getCount() + 1);
+    productRepository.save(products);
+    return pressBasket(update.getCallbackQuery().getMessage().getChatId(),update.getCallbackQuery().getMessage().getMessageId());
   }
 
   public BotApiMethod<?> pressCProduct(Long chatId, Long productId, int messageId) {

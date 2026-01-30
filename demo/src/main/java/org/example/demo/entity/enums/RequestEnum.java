@@ -16,6 +16,7 @@ public enum RequestEnum {
   ADD_BASKET,
   B_PRODUCT,
   H_PRODUCT,
+  CANCEL,
   //  #######
   MENU,
   ADD_PRODUCT,

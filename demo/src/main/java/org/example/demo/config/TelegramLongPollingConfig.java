@@ -78,6 +78,8 @@ public class TelegramLongPollingConfig extends TelegramLongPollingBot {
 
           case BUY_PRODUCT -> execute(botResponseService.pressBuy(update));
 
+          case CANCEL ->  execute(botResponseService.pressCancel(update));
+
           /*
 
           case NEXT -> execute();

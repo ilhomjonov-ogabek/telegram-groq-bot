@@ -1,6 +1,7 @@
 package org.example.demo.service;
 
 
+import java.io.Serializable;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -40,4 +41,6 @@ public interface BotResponseService {
   BotApiMethod<?> pressHProduct(Update update);
 
   BotApiMethod<?> pressBuy(Update update);
+
+  BotApiMethod<?> pressCancel(Update update);
 }

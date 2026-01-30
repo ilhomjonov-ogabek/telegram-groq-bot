@@ -45,13 +45,9 @@ public class BotRequestServiceImpl implements BotRequestService {
   public boolean equalsCategory(Update update) {
     CallbackQuery callbackQuery = update.getCallbackQuery();
     String request = callbackQuery.getData();
-    if (request.charAt(0) == 'C') {
-      String substring = request.substring(0, 8);
-      if (substring.equals("CATEGORY")) {
+      if (request.charAt(2) == 'T' && request.substring(0, 8).equals("CATEGORY")) {
         return true;
       }
-    }
-
     return false;
   }
 
@@ -160,7 +156,7 @@ public class BotRequestServiceImpl implements BotRequestService {
   public boolean equalsCProduct(Update update) {
     CallbackQuery callbackQuery = update.getCallbackQuery();
     String request = callbackQuery.getData();
-    if (request.charAt(0) == 'C') {
+    if (request.charAt(1) == '_') {
       String substring = request.substring(0, 9);
       if (substring.equals("C_PRODUCT")) {
         return true;
@@ -216,6 +212,16 @@ public class BotRequestServiceImpl implements BotRequestService {
     CallbackQuery callbackQuery = update.getCallbackQuery();
     String request = callbackQuery.getData();
     if(request.charAt(0) == 'B' && request.substring(0, 11).equals("BUY_PRODUCT")){
+      return true;
+    }
+    return false;
+  }
+
+  @Override
+  public boolean equalsCancel(Update update) {
+    CallbackQuery callbackQuery = update.getCallbackQuery();
+    String request = callbackQuery.getData();
+    if(request.charAt(0) == 'C' && request.substring(0,6).equals("CANCEL")){
       return true;
     }
     return false;

@@ -45,6 +45,8 @@ public class AllMethodService {
       return  RequestEnum.H_PRODUCT;
     } else if (botRequestService.equalsBuy(update)) {
       return  RequestEnum.BUY_PRODUCT;
+    } else if (botRequestService.equalsCancel(update)) {
+      return  RequestEnum.CANCEL;
     }
     return RequestEnum.TRAY_START;
   }

@@ -2,65 +2,86 @@
 <html lang="uz">
 <head>
   <meta charset="UTF-8">
-  <title>4x5 Jadval   Ilhomjonov Ogabek</title>
-  <style>
-    table { border-collapse: collapse; margin-top: 10px; }
-    td { border: 1px solid #444; padding: 10px; width: 50px; text-align: center; }
-    button { margin-right: 10px; padding: 8px 14px; }
-  </style>
+  <title>Massivda eng katta element</title>
 </head>
+<style>
+  body {
+    background-color: #f2f6ff;
+    font-family: Arial, sans-serif;
+  }
+
+  table {
+    border-collapse: collapse;
+    margin-top: 10px;
+    background-color: white;
+  }
+
+  td {
+    border: 1px solid black;
+    padding: 5px;
+    text-align: center;
+  }
+
+  .label {
+    margin-top: 10px;
+    padding: 8px;
+    border: 1px solid gray;
+    background-color: #e6ffe6;
+  }
+</style>
+
 <body>
 
-<h3>4 × 5 Jadval  Ilhomjonov Ogabek</h3>
+<h3>N x M massiv bilan ishlash Tursunaliyev Jahongir</h3>
 
-<button onclick="fillTable()">Random to‘ldirish</button>
-<button onclick="filterNumbers()">3 ga va 5 ga bo‘linadiganlar</button>
+N: <input type="number" id="n">
+M: <input type="number" id="m">
+<button onclick="generateMatrix()">Yaratish</button>
 
-<table id="tbl"></table>
-
-<h3>Natija:</h3>
-<p><b>3 ga bo‘linadiganlar:</b> <span id="div3">—</span></p>
-<p><b>5 ga bo‘linadiganlar:</b> <span id="div5">—</span></p>
-<p><b>3 va 5 ga (15 ga) bo‘linadiganlar:</b> <span id="divBoth">—</span></p>
+<div id="tableContainer"></div>
+<div id="result" class="label"></div>
 
 <script>
-  const tbl = document.getElementById("tbl");
-  for (let r = 0; r < 4; r++) {
-    let row = document.createElement("tr");
-    for (let c = 0; c < 5; c++) {
-      let cell = document.createElement("td");
-      cell.innerText = "-";
-      row.appendChild(cell);
-    }
-    tbl.appendChild(row);
-  }
+  function generateMatrix() {
+    let n = parseInt(document.getElementById("n").value);
+    let m = parseInt(document.getElementById("m").value);
 
-  function fillTable() {
-    for (let r = 0; r < tbl.rows.length; r++) {
-      for (let c = 0; c < tbl.rows[r].cells.length; c++) {
-        let rand = Math.floor(Math.random() * 101) + 50;
-        tbl.rows[r].cells[c].innerText = rand;
+    if (isNaN(n) || isNaN(m) || n <= 0 || m <= 0) {
+      alert("N va M musbat son bo‘lishi kerak");
+      return;
+    }
+
+    let matrix = [];
+    let tableHtml = "<table>";
+
+    let maxValue = -501;
+    let maxRow = 0;
+    let maxCol = 0;
+
+    for (let i = 0; i < n; i++) {
+      matrix[i] = [];
+      tableHtml += "<tr>";
+      for (let j = 0; j < m; j++) {
+        let rand = Math.floor(Math.random() * 1001) - 500;
+        matrix[i][j] = rand;
+
+        if (rand > maxValue) {
+          maxValue = rand;
+          maxRow = i;
+          maxCol = j;
+        }
+
+        tableHtml += "<td>" + rand + "</td>";
       }
+      tableHtml += "</tr>";
     }
-  }
+    tableHtml += "</table>";
 
+    document.getElementById("tableContainer").innerHTML = tableHtml;
 
-  function filterNumbers() {
-    let numbers = [];
-
-    for (let r = 0; r < tbl.rows.length; r++) {
-      for (let c = 0; c < tbl.rows[r].cells.length; c++) {
-        numbers.push(Number(tbl.rows[r].cells[c].innerText));
-      }
-    }
-
-    let div3 = numbers.filter(n => n % 3 === 0);
-    let div5 = numbers.filter(n => n % 5 === 0);
-    let both = numbers.filter(n => n % 15 === 0);
-
-    document.getElementById("div3").innerText = div3.join(", ") || "—";
-    document.getElementById("div5").innerText = div5.join(", ") || "—";
-    document.getElementById("divBoth").innerText = both.join(", ") || "—";
+    document.getElementById("result").innerText =
+        "Eng katta element: " + maxValue +
+        " | Indeksi: [" + maxRow + "][" + maxCol + "]";
   }
 </script>
 

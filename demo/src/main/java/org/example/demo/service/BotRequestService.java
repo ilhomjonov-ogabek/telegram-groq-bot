@@ -37,4 +37,6 @@ public interface BotRequestService {
   boolean equalsHProduct(Update update);
 
   boolean equalsBuy(Update update);
+
+  boolean equalsCancel(Update update);
 }
