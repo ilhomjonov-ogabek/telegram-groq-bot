@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import uz.airline.uzairlinebookingsystem.dto.SearchingDTO;
 import uz.airline.uzairlinebookingsystem.dto.UserDTO;
 import uz.airline.uzairlinebookingsystem.dto.UserSignDTO;
 import uz.airline.uzairlinebookingsystem.service.UserService;
@@ -23,5 +24,10 @@ public class UserController {
   @PostMapping("/sign-in")
   public ResponseEntity<?> signIn(@RequestBody UserSignDTO userDTO) {
     return userService.signInUser(userDTO);
+  }
+
+  @PostMapping("/search")
+  public ResponseEntity<?> searchUser(@RequestBody SearchingDTO bookingDTO) {
+    return userService.searchBooking(bookingDTO);
   }
 }

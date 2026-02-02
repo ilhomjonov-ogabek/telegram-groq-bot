@@ -1,4 +1,4 @@
-package uz.airline.learningapi.config;
+package uz.airline.uzairlinebookingsystem.configs;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

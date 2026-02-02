@@ -6,14 +6,14 @@ import java.time.ZoneId;
 import lombok.Getter;
 
 @Getter
-public class AppErrorDto {
+public class AppErrorDTO {
 
   private String errorPath;
   private String errorMessage;
   private Integer errorCode;
   private LocalDateTime timestamp;
 
-  public AppErrorDto(String errorPath, String errorMessage, Integer errorCode) {
+  public AppErrorDTO(String errorPath, String errorMessage, Integer errorCode) {
     this.errorPath = errorPath;
     this.errorMessage = errorMessage;
     this.errorCode = errorCode;

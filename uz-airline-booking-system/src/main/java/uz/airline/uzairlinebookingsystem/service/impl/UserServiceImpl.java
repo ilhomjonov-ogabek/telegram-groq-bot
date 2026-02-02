@@ -1,15 +1,19 @@
 package uz.airline.uzairlinebookingsystem.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
+import uz.airline.uzairlinebookingsystem.dto.BookingDTO;
+import uz.airline.uzairlinebookingsystem.dto.SearchingDTO;
 import uz.airline.uzairlinebookingsystem.dto.UserDTO;
 import uz.airline.uzairlinebookingsystem.dto.UserSignDTO;
+import uz.airline.uzairlinebookingsystem.dto.AviationResponseDTO;
 import uz.airline.uzairlinebookingsystem.entity.UserEntity;
 import uz.airline.uzairlinebookingsystem.enums.RoleEnum;
 import uz.airline.uzairlinebookingsystem.jwtConfig.JwtProvider;
@@ -23,6 +27,7 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtProvider jwtProvider;
+  private final RestClient restClient;
 
   @Override
   public ResponseEntity<?> singUpUser(UserDTO userDTO) {
@@ -71,4 +76,22 @@ public class UserServiceImpl implements UserService {
         "role", user.getRole().name()
     ));
   }
+
+  @Override
+  public ResponseEntity<?> searchBooking(SearchingDTO bookingDTO) {
+
+    AviationResponseDTO response = restClient.get()
+        .uri(uriBuilder -> uriBuilder
+            .path("${aviationstack.base-url}")
+            .queryParam("access_key", "${aviationstack.api-key}")
+            .queryParam("flight_iata", bookingDTO.getToIata())
+            .build())
+        .retrieve()
+        .body(AviationResponseDTO.class);
+
+    List<BookingDTO> bookings = response.getData();
+
+    return ResponseEntity.ok(bookings);
+  }
+
 }
