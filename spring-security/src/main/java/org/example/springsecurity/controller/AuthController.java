@@ -43,7 +43,7 @@ public class AuthController {
     if (user == null) {
       return ResponseEntity.notFound().build();
     }
-    if (passwordEncoder.matches(userDto.password(), userDto.password())) {
+    if (passwordEncoder.matches(userDto.password(), user.getPassword())) {
       String token = jwtProvider.generateToken(user.getUsername(), Map.of());
       return ResponseEntity.ok().body(token);
     }

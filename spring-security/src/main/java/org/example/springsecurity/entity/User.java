@@ -1,7 +1,5 @@
 package org.example.springsecurity.entity;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import jakarta.persistence.Entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
