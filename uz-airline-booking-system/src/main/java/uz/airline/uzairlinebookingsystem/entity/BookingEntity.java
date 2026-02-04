@@ -6,9 +6,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.airline.uzairlinebookingsystem.enums.BookingStatus;
 
@@ -16,6 +20,9 @@ import uz.airline.uzairlinebookingsystem.enums.BookingStatus;
 @Setter
 @Entity
 @Table(name = "booking_entity")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class BookingEntity {
 
   @Id
@@ -23,23 +30,18 @@ public class BookingEntity {
   @Column(name = "id", nullable = false)
   private Long id;
 
+  @NotNull
   private Long userId;
-  private String flightIata;
   private String flightNumber;
-  private String airlineIata;
   private String airlineName;
-  private String fromIata;
-  private String toIata;
-  private String fromAirportName;
-  private String toAirportName;
-  private OffsetDateTime departureTime;
-  private OffsetDateTime arrivalTime;
+  private String depIata;
+  private String arrIata;
+  private OffsetDateTime depScheduled;
+  private OffsetDateTime arrScheduled;
   private OffsetDateTime bookedAt;
-  private OffsetDateTime updatedAt;
   private BookingStatus status;
+  private Boolean booked;
   private BigDecimal price;
-
-
 
 
 

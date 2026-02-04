@@ -14,7 +14,7 @@ public class ExternalApiService {
 
   private final RestClient restClient;
 
-  public ExternalApiService(RestClient restClient) {
+  public ExternalApiService(RestClient restC  lient) {
     this.restClient = restClient;
   }
 

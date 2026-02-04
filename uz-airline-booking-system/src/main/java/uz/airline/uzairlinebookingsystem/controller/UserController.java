@@ -3,7 +3,7 @@ package uz.airline.uzairlinebookingsystem.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import uz.airline.uzairlinebookingsystem.dto.BookingDTO;
 import uz.airline.uzairlinebookingsystem.dto.SearchingDTO;
 import uz.airline.uzairlinebookingsystem.dto.UserDTO;
 import uz.airline.uzairlinebookingsystem.dto.UserSignDTO;
@@ -27,7 +27,15 @@ public class UserController {
   }
 
   @PostMapping("/search")
-  public ResponseEntity<?> searchUser(@RequestBody SearchingDTO bookingDTO) {
-    return userService.searchBooking(bookingDTO);
+  public ResponseEntity<?> searchUser(
+      @RequestBody SearchingDTO bookingDTO) {
+    return userService.searchFlight(bookingDTO);
   }
+
+  @PostMapping("/booking")
+  public ResponseEntity<?> booking(@RequestBody BookingDTO bookingDTO) {
+    return userService.bookingFlight(bookingDTO);
+  }
+
+
 }

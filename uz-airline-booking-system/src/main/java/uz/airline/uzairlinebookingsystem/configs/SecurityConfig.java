@@ -58,7 +58,7 @@ public class SecurityConfig {
         }))
 
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/v1/user/login", "/api/v1/user/sign-in","/api/v1/user/search",  "/api/v1/flights/**").permitAll()
+            .requestMatchers("/api/v1/user/login", "/api/v1/user/sign-in","/api/v1/user/search","/api/v1/user/booking").permitAll()
             .anyRequest().authenticated()
         )
 
