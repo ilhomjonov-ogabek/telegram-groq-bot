@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -93,47 +94,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public ResponseEntity<?> searchFlight(SearchingDTO searchingDTO) {
 
-    AviationStackResponseDTO apiResponse = restClient.get()
-        .uri(uriBuilder -> uriBuilder
-            .scheme("https")
-            .host("api.aviationstack.com")
-            .path("/v1/flights")
-            .queryParam("access_key", apiKey)
-            .queryParam("dep_iata", searchingDTO.getDepIata())
-            .queryParam("arr_iata", searchingDTO.getArrIata())
-            /*.queryParam("flight_date",
-                searchingDTO.getDepartureTime().toLocalDate().toString())*/
-            .build())
-        .retrieve()
-        .body(AviationStackResponseDTO.class);
-
-    if (apiResponse == null || apiResponse.getData() == null) {
-      return ResponseEntity.ok(List.of());
-    }
-
-    List<BookingDTO> flights = apiResponse.getData().stream()
-        .map(item -> {
-          BookingDTO dto = new BookingDTO();
-
-          dto.setFlightNumber(item.getFlight() != null ? item.getFlight().getIata() : null);
-          dto.setAirlineName(item.getAirline() != null ? item.getAirline().getName() : null);
-
-          dto.setDepIata(item.getDeparture() != null ? item.getDeparture().getIata() : null);
-          dto.setArrIata(item.getArrival() != null ? item.getArrival().getIata() : null);
-
-          if (item.getDeparture() != null && item.getDeparture().getScheduled() != null) {
-            dto.setDepScheduled(OffsetDateTime.parse(item.getDeparture().getScheduled()));
-          }
-          if (item.getArrival() != null && item.getArrival().getScheduled() != null) {
-            dto.setArrScheduled(OffsetDateTime.parse(item.getArrival().getScheduled()));
-          }
-
-          dto.setStatus(BookingStatus.SCHEDULED.toString());
-          dto.setPrice(null);
-
-          return dto;
-        })
-        .toList();
+    List<BookingDTO> flights = api(searchingDTO);
     List<BookingDTO> responses = new ArrayList<>();
 
     flights.forEach(flight -> {
@@ -173,6 +134,55 @@ public class UserServiceImpl implements UserService {
     bookingRepository.save(booking);
 
     return ResponseEntity.ok(booking);
+  }
+
+  @Async
+  protected List<BookingDTO> api(SearchingDTO searchingDTO) {
+
+    AviationStackResponseDTO apiResponse = restClient.get()
+        .uri(uriBuilder -> uriBuilder
+            .scheme("https")
+            .host("api.aviationstack.com")
+            .path("/v1/flights")
+            .queryParam("access_key", apiKey)
+            .queryParam("dep_iata", searchingDTO.getDepIata())
+            .queryParam("arr_iata", searchingDTO.getArrIata())
+            /*.queryParam("flight_date",
+                searchingDTO.getDepartureTime().toLocalDate().toString())*/
+            .build())
+        .retrieve()
+        .body(AviationStackResponseDTO.class);
+
+    if (apiResponse == null || apiResponse.getData() == null) {
+      return List.of();
+    }
+
+    List<BookingDTO> flights = apiResponse.getData().stream()
+        .map(item -> {
+          BookingDTO dto = new BookingDTO();
+
+          dto.setFlightNumber(item.getFlight() != null ? item.getFlight().getIata() : null);
+          dto.setAirlineName(item.getAirline() != null ? item.getAirline().getName() : null);
+
+          dto.setDepIata(item.getDeparture() != null ? item.getDeparture().getIata() : null);
+          dto.setArrIata(item.getArrival() != null ? item.getArrival().getIata() : null);
+
+          if (item.getDeparture() != null && item.getDeparture().getScheduled() != null) {
+            dto.setDepScheduled(OffsetDateTime.parse(item.getDeparture().getScheduled()));
+          }
+          if (item.getArrival() != null && item.getArrival().getScheduled() != null) {
+            dto.setArrScheduled(OffsetDateTime.parse(item.getArrival().getScheduled()));
+          }
+
+          dto.setStatus(BookingStatus.SCHEDULED.toString());
+          dto.setPrice(null);
+
+          return dto;
+        })
+        .toList();
+
+    return flights;
+
   }
 
 
