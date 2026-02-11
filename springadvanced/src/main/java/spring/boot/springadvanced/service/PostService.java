@@ -1,5 +1,6 @@
 package spring.boot.springadvanced.service;
 
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import spring.boot.springadvanced.dto.PostCreateDTO;
 import spring.boot.springadvanced.dto.PostUpdateDTO;
@@ -13,5 +14,7 @@ public interface PostService {
 
   void delete(Integer id);
 
-  void update(PostUpdateDTO dto);
+  Post update(PostUpdateDTO dto);
+
+  List<Post> getAll();
 }

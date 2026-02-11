@@ -1,5 +1,6 @@
 package spring.boot.springadvanced.controller;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +44,11 @@ public class PostController {
   @PutMapping
   public void update(@RequestBody PostUpdateDTO dto) {
     postService.update(dto);
+  }
+
+  @GetMapping
+  public List<Post> getAll(){
+    return postService.getAll();
   }
 
 }
