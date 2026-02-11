@@ -5,6 +5,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import spring.boot.springadvanced.dto.PostCreateDTO;
@@ -14,12 +16,17 @@ import spring.boot.springadvanced.repository.PostRepository;
 import spring.boot.springadvanced.service.PostService;
 
 @Service
-@RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
   private final PostRepository postRepository;
-  private final ConcurrentHashMap<Integer, Post> postsCashe = new ConcurrentHashMap<>();
+  private final CacheManager cacheManager;
+  private final Cache cache;
 
+  public PostServiceImpl(PostRepository postRepository, CacheManager cacheManager) {
+    this.postRepository = postRepository;
+    this.cacheManager = cacheManager;
+    this.cache = cacheManager.getCache("posts");
+  }
 
 
   @Override
@@ -31,20 +38,20 @@ public class PostServiceImpl implements PostService {
   @Override
   @SneakyThrows
   public Post get(Integer id)  {
-    Post cashedPost = postsCashe.get(id);
+    Post cashedPost = cache.get(id, Post.class);
     if(cashedPost != null) {
       return cashedPost;
     }
     Post post =  postRepository.findById(id).orElseThrow(()-> new RuntimeException("Post not found"));
     TimeUnit.SECONDS.sleep(1);
-    postsCashe.put(id, post);
+    cache.put(id, post);
     return post;
   }
 
   @Override
   @SneakyThrows
   public void delete(Integer id)  {
-    postsCashe.remove(id);
+    cache.evict(id);
     postRepository.deleteById(id);
   }
 
@@ -55,6 +62,6 @@ public class PostServiceImpl implements PostService {
     post.setBody(dto.getBody());
     postRepository.save(post);
 
-    postsCashe.put(dto.getId(), post);
+    cache.put(dto.getId(), post);
   }
 }
