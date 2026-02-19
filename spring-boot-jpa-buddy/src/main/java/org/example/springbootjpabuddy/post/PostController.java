@@ -15,6 +15,11 @@ public class PostController {
 
   @GetMapping("/{id}")
   public Post getPost(@PathVariable Integer id) {
+    try {
+      Thread.sleep(5000);
+    } catch (InterruptedException e) {
+      System.out.println(e.getMessage());
+    }
     return postRepository.findById(id).orElseThrow(()->new RuntimeException("Post not found"));
   }
 
